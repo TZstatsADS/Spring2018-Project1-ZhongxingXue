@@ -290,7 +290,7 @@ paste(names(speech.df[,-1]), ":", as.character(speech.df$sentences[apply(speech.
 
 
 ## Clustering of emotions
-```{r, fig.width=4, fig.height=2}
+```{r, fig.width=4, fig.height=2, echo=FALSE}
 par(mar=c(4, 6, 2, 1), mfrow=c(1,2))
 
 emo.means=colMeans(select(sentence.list%>%filter(Term==1), anger:trust)>0.01)
@@ -449,27 +449,16 @@ Adapted from <https://eight2late.wordpress.com/2015/09/29/a-gentle-introduction-
 ```{r}
 #remove potentially problematic symbols
 docs <-tm_map(docs,content_transformer(tolower))
-writeLines(as.character(docs[[sample(1:nrow(corpus.list), 1)]]))
-
 #remove punctuation
 docs <- tm_map(docs, removePunctuation)
-writeLines(as.character(docs[[sample(1:nrow(corpus.list), 1)]]))
-
 #Strip digits
 docs <- tm_map(docs, removeNumbers)
-writeLines(as.character(docs[[sample(1:nrow(corpus.list), 1)]]))
-
 #remove stopwords
 docs <- tm_map(docs, removeWords, stopwords("english"))
-writeLines(as.character(docs[[sample(1:nrow(corpus.list), 1)]]))
-
 #remove whitespace
 docs <- tm_map(docs, stripWhitespace)
-writeLines(as.character(docs[[sample(1:nrow(corpus.list), 1)]]))
-
 #Stem document
 docs <- tm_map(docs,stemDocument)
-writeLines(as.character(docs[[sample(1:nrow(corpus.list), 1)]]))
 ```
 
 ### Topic modeling

@@ -1,5 +1,5 @@
 # Spring 2018
-# Project 1: Fun facts of inauguration in the re-elected presidents
+# Project 1: Analysis of re-elected presidents' inauguration speeches
 
 ~~Will Donald Trump be re-elected in 2020?~~
 
@@ -23,21 +23,21 @@ Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by
 
 ```
 proj/
-??? lib/
-??? data/
-??? doc/
-??? figs/
-??? output/
+- lib/
+- data/
+- doc/
+- figs/
+- output/
 ```
 ##  Main content of the project
 ###  Overview of data & Basis Analysis
-
+![image](figs/title2.jpg)
 ###  Data processing -- Word frequency and Sentence length
-
+![image](figs/WordCloudInaug.png)
 ###  Data analysis -- Sentiment analysis
-
+![image](figs/funfactcluster1.png)
 ###  Data analysis -- Topic modeling
-
+![image](figs/cluster_topic.png)
 ### References 
 [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz)
 

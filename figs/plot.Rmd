@@ -15,44 +15,4 @@ sssd \textit{ 2ed2 ddwe \\ weww  \\ eWe,d }
 
 2e23
 
-```{r}
-
-library(ggplot2)
-Presidents <- data.frame(c("BarackObama", "DwightDEisenhower", "FranklinDRoosevelt", "RichardNixon", "RonaldReagan", "WilliamJClinton", "GeorgeWBush"))
-Presidents$Rate1 <- c(49.1,69.6,63.0,55.8,50.3,49.6,62.2)
-Presidents$Rate2 <- c(46.7,60.5,70.0,34.4,55.3,60.6,36.5)
-names(Presidents)[1] <- "Names"
-Presidents$WordCountAve1 <- c(19.4, 19.3, 18.8, 17.5, 17.5, 15.7, 15.6)
-Presidents$WordCountAve2 <- c(19.9, 16.7, 16.5, 23.8, 18.5, 19.4, 20.1)
-Presidents$WordCountSum1 <- c(2383, 2436, 1875, 2103, 2418, 1598, 1590)
-Presidents$WordCountSum2 <- c(2085, 1636, 1800, 1829, 2538, 2152, 2069)
-
-Presidents2terms <- data.frame(names(tapply(sentence.list.inaug$word.count, sentence.list.inaug$File, sum)))
-names(Presidents2terms) <- c("Name")
-
-Presidents2terms $WordCountSum1st <- as.vector(tapply(sentence.list.inaug$word.count, sentence.list.inaug$File, sum))
-Presidents2terms $WordCountMean1st <- as.vector(tapply(sentence.list.inaug$word.count, sentence.list.inaug$File, mean))
-
-Presidents2terms $WordCountSum2nd <- as.vector(tapply(sentence.list.inaug2$word.count, sentence.list.inaug2$File, sum))
-Presidents2terms $WordCountMean2nd <- as.vector(tapply(sentence.list.inaug2$word.count, sentence.list.inaug2$File, mean))
-Presidents2terms $Party <- factor(c("Republican", "Democratic", "Democratic", "Republican", "Democratic", NA, "Republican", "Democratic-Republican", "Democratic-Republican", "Republican", "Republican", "Democratic-Republican", "Republican", "Democratic", "Republican", "Democratic"))
-
-Presidents2terms $ WordSum <- Presidents2terms $WordCountSum1st
-Presidents2terms $ WordMean <- Presidents2terms $WordCountMean1st
-
-Presidents2terms $StartYear <- c(1861, 1829, 2009, 1953, 1933, 1789, 2001, 1809, 1817, 1969, 1981, 1801, 1869, 1993, 1897, 1913)
-
-Presidents2terms <- rbind(Presidents2terms, Presidents2terms)
-Presidents2terms $ Term <- factor(c(rep(1, 16), rep(2, 16)))
-
-Presidents2terms $ WordSum[Presidents2terms $ Term == 2] <- Presidents2terms $WordCountSum2nd[Presidents2terms $ Term == 2]
-Presidents2terms $ WordMean[Presidents2terms $ Term == 2] <- Presidents2terms $WordCountMean2nd[Presidents2terms $ Term == 2]
-
-
-ggplot(data = Presidents2terms, aes(as.character(StartYear), WordSum, group = Term, fill = Term, color = Term)) + geom_smooth(method = "loess") + geom_col(position = "dodge", alpha = 0.3) + xlab("Started year of President") + ylab("Number of words") + ggtitle("number of words in Inauguration Speeches") + theme(plot.title = element_text(hjust = 0.5))
-
-
-ggplot(data = Presidents2terms, aes(as.character(StartYear), WordMean, group = Term, fill = Term, color = Term)) + geom_smooth(method = "loess") + geom_col(position = "dodge", alpha = 0.3) + xlab("Started year of President") + ylab("Average words/setence") + ggtitle("average words per sentence in Inauguration Speeches") + theme(plot.title = element_text(hjust = 0.5))
-
-
-```
+![](funfactcluster1.png){:height="50%" width="50%"}
