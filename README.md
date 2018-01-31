@@ -22,5 +22,7 @@ In this project, we will focus on the inauguration of the presidents who got re-
 
 ### References 
 [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz)
-http://www.sthda.com/english/wiki/text-mining-and-word-cloud-fundamentals-in-r-5-simple-steps-you-should-know
-http://anythingbutrbitrary.blogspot.com/2014/01/statistics-meets-rhetoric-text-analysis.html
+
+https://en.wikipedia.org/wiki/President_of_the_United_States
+
+http://news.gallup.com/poll/116677/Presidential-Approval-Ratings-Gallup-Historical-Statistics-Trends.aspx , Gallup.com. Retrieved August 16, 2011.
