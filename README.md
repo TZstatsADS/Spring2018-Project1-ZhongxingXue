@@ -1,7 +1,11 @@
 # Spring 2018
-# Project 1: What did the presidents say at their inauguation?
+# Project 1: Fun facts of inauguration in the re-elected presidents
 
 ![image](figs/title.jpg)
+
+<div align=center>
+<img src="figs/title.jpg" alt="Will Trump get re-elected in 2020?" align=center />
+</div>
 
 ### [Project Description](doc/)
 This is the first and only *individual* (as opposed to *team*) this semester. 
