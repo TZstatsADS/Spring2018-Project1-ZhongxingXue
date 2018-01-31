@@ -1,0 +1,255 @@
+---
+title: "Title"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+Author: Zhongxing Xue(zx2221)
+---
+
+The inauguration speeches are always one of the most important events of the presidents, and they contain lots of messages and information. In this project, we will focus on the inauguration speeches of the US presidents ** who were re-elected (successfully)** by applying Natural Language Processing (NLP) methods.
+
+# I. Overview of the data
+
+The President of the United States is the head of state and head of government of the United States of America and the term of office for the president is four years. Franklin D. Roosevelt, as we known, was elected to a 3rd and a 4th term, and died in his president office. In response to Roosevelt being elected to four terms, the Twenty-second Amendment was adopted in 1951. The amendment bars anyone from being elected president more than twice term, and since then, many presidents chose to re-elect in the 2nd term and quit before the 3rd term (if they get re-elected).
+
+In the project, We only choose all inauguration speeches of every president. 58 speeches are considered. We usually consider 16 getting re-elected presidents and thus 32 speeches (16 from their 1st term speech, and other 16 from 2nd's).
+
+
+
+Before we make a text analysis, we should do some preparation first.
+
+*# Step 0: check and install needed packages. Load the libraries and functions.*
+
+
+```{r, message=FALSE, warning=FALSE, echo = FALSE}
+packages.used=c("rvest", "tibble", "qdap", 
+                "sentimentr", "gplots", "dplyr",
+                "tm", "syuzhet", "factoextra", 
+                "beeswarm", "scales", "RColorBrewer",
+               "RANN", "tm", "topicmodels")
+# rvest: scrap data online
+# tibble: deal with table data
+# qdap: quantitive method esp. text mining
+# sentimentr: sentiment
+# gplots: plot
+# dplyr: pre-process, apply
+# tm: text-mining
+
+# check packages that need to be installed.
+
+# load packages
+library("rvest")
+library("tibble")
+# You may need to run
+# sudo ln -f -s $(/usr/libexec/java_home)/jre/lib/server/libjvm.dylib /usr/local/lib
+# in order to load qdap
+library("qdap")
+library("sentimentr")
+library("gplots")
+library("dplyr")
+library("tm")
+library("syuzhet")
+library("factoextra")
+library("beeswarm")
+library("scales")
+library("RColorBrewer")
+library("RANN")
+library("tm")
+library("topicmodels")
+
+source("../lib/plotstacked.R")
+source("../lib/speechFuncs.R")
+```
+
+*# Step 1: Data harvest: scrap speech URLs from <http://www.presidency.ucsb.edu/>.*
+
+*Following the example of [Jerid Francom](https://francojc.github.io/2015/03/01/web-scraping-with-rvest-in-r/), we used [Selectorgadget](http://selectorgadget.com/) to choose the links we would like to scrap. For this project, we selected all inaugural addresses of past presidents, nomination speeches of major party candidates and farewell addresses. We also included several public speeches from Donald Trump for our textual analysis of presidential speeches.*
+
+```{r, message=FALSE, warning=FALSE, echo = FALSE}
+### Inauguaral speeches
+main.page <- read_html(x = "http://www.presidency.ucsb.edu/inaugurals.php")
+# Get link URLs
+# f.speechlinks is a function for extracting links from the list of speeches. 
+inaug=f.speechlinks(main.page)
+#head(inaug)
+as.Date(inaug[,1], format="%B %e, %Y")
+inaug=inaug[-nrow(inaug),] # remove the last line, irrelevant due to error.
+
+```
+
+*# Step 2: Using speech metadata posted on <http://www.presidency.ucsb.edu/>, we prepared CSV data sets for the speeches we will scrap.*
+
+```{r, echo = FALSE}
+inaug.list=read.csv("../data/inauglist.csv", stringsAsFactors = FALSE)
+```
+
+*We assemble all scrapped speeches into one list. Note here that we don't have the full text yet, only the links to full text transcripts.*
+
+*# Step 3: scrap the texts of speeches from the speech URLs.*
+
+```{r, echo = FALSE}
+speech.list=inaug.list
+speech.list$type=c(rep("inaug", nrow(inaug.list)))
+speech.url=inaug
+speech.list=cbind(speech.list, speech.url)
+```
+
+*Based on the list of speeches, we scrap the main text part of the transcript's html page. For simple html pages of this kind, [Selectorgadget](http://selectorgadget.com/) is very convenient for identifying the html node that `rvest` can use to scrap its content. For reproducibility, we also save our scrapped speeches into our local folder as individual speech files. *
+
+```{r, echo= FALSE}
+# Loop over each row in speech.list
+speech.list$fulltext=NA
+for(i in seq(nrow(speech.list))) {
+  text <- read_html(speech.list$urls[i]) %>% # load the page
+    html_nodes(".displaytext") %>% # isloate the text
+    html_text() # get the text
+  speech.list$fulltext[i]=text
+  # Create the file name
+  filename <- paste0("../data/InauguralSpeeches/", 
+                     speech.list$type[i],
+                     speech.list$File[i], "-", 
+                     speech.list$Term[i], ".txt")
+  sink(file = filename) %>% # open file to write 
+  cat(text)  # write the file
+  sink() # close the file
+}
+```
+
+*# Step 4: data Processing --- generate list of sentences*
+
+*We will use sentences as units of analysis for this project, as sentences are natural languge units for organizing thoughts and ideas. For each extracted sentence, we apply sentiment analysis using [NRC sentiment lexion](http://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm). "The NRC Emotion Lexicon is a list of English words and their associations with eight basic emotions (anger, fear, anticipation, trust, surprise, sadness, joy, and disgust) and two sentiments (negative and positive). The annotations were manually done by crowdsourcing."*
+
+*We assign an sequential id to each sentence in a speech (`sent.id`) and also calculated the number of words in each sentence as *sentence length* (`word.count`).*
+
+```{r, message=FALSE, warning=FALSE, echo = FALSE}
+sentence.list=NULL
+for(i in 1:nrow(speech.list)){
+  sentences=sent_detect(speech.list$fulltext[i],
+                        endmarks = c("?", ".", "!", "|",";"))
+  if(length(sentences)>0){
+    emotions=get_nrc_sentiment(sentences)
+    word.count=word_count(sentences)
+    # colnames(emotions)=paste0("emo.", colnames(emotions))
+    # in case the word counts are zeros?
+    emotions=diag(1/(word.count+0.01))%*%as.matrix(emotions)
+    sentence.list=rbind(sentence.list, 
+                        cbind(speech.list[i,-ncol(speech.list)],
+                              sentences=as.character(sentences), 
+                              word.count,
+                              emotions,
+                              sent.id=1:length(sentences)
+                              )
+    )
+  }
+}
+```
+
+*Some non-sentences exist in raw data due to erroneous extra end-of-sentence marks.*
+
+```{r, echo= FALSE}
+sentence.list=
+  sentence.list%>%
+  filter(!is.na(word.count)) 
+
+```
+
+# Step 5: Data analysis --- length of sentences
+
+
+## Overview of sentence length distribution by different types of speeches. 
+
+### Nomination speeches 
+
+First, we look at *nomination acceptance speeches* at major party's national conventions. For relevant to Trump's speeches, we limit our attention to speeches for the first terms of former U.S. presidents.  We noticed that a number of presidents have very short sentences in their nomination acceptance speeches. 
+
+#### First term
+
+find the right president
+```{r}
+
+par(mar=c(4, 9, 2, 2))
+
+sentence.list.inaug=filter(sentence.list, Term==1)
+
+sentence.list.inaug$File=factor(sentence.list.inaug$File)
+
+sentence.list.inaug2=filter(sentence.list, Term==2, File%in% sentence.list.inaug$File)
+
+sentence.list.inaug=filter(sentence.list, Term==1, File%in%sentence.list.inaug2$File)
+
+
+sentence.list.inaug$FileOrdered=reorder(sentence.list.inaug$File, 
+                                  sentence.list.inaug$word.count, 
+                                  mean, 
+                                  order=T)
+
+beeswarm(word.count~FileOrdered, 
+         data=sentence.list.inaug,
+         horizontal = TRUE, 
+         pch=16, col=alpha(brewer.pal(9, "Set1"), 0.6), 
+         cex=0.45, cex.axis=0.7, cex.lab=0.9,
+         spacing=8/nlevels(sentence.list.inaug$FileOrdered),
+         las=2, xlab="Number of words in a sentence.", ylab="",
+         main="Inauguration speeches, 1st term")
+
+```
+
+#### Second term
+
+```{r, fig.width = 3, fig.height = 2}
+
+par(mar=c(4, 9, 2, 2))
+Comp <- function(x)
+{
+  Names <- c("GeorgeWashington", "AndrewJackson", "JamesMadison", "WilliamMcKinley", "ThomasJefferson", "UlyssesSGrant", "JamesMonroe", "AbrahamLincoln", "WoodrowWilson", "BarackObama", "DwightDEisenhower", "FranklinDRoosevelt", "RichardNixon", "RonaldReagan", "WilliamJClinton", "GeorgeWBush")
+  for (i in 1:16)
+    if (x == Names[i])
+      return(i)
+}
+
+####inaug 2nd terms
+#sentence.list.inaug2=filter(sentence.list, 
+#                        type=="inaug", Term==2, File %in% sentence.list.inaug$File)
+for (i in 1:length(sentence.list.inaug2$File))
+{
+  sentence.list.inaug2$File[i] <- paste(sentence.list.inaug2$File[i], ",", Comp(sentence.list.inaug2$File[i]))
+}
+
+sentence.list.inaug2$File=factor(sentence.list.inaug2$File)
+
+sentence.list.inaug2$FileOrdered=reorder(sentence.list.inaug2$File, 
+                                  sentence.list.inaug2$word.count, 
+                                  mean, 
+                                  order=T)
+
+beeswarm(word.count~FileOrdered, 
+         data=sentence.list.inaug2,
+         horizontal = TRUE, 
+         pch=16, col=alpha(brewer.pal(9, "Set1"), 0.6), 
+         cex=0.55, cex.axis=0.7, cex.lab=0.9,
+         spacing=3/nlevels(sentence.list.inaug2$FileOrdered),
+         las=2, xlab="Number of words in a sentence.", ylab="",
+         main="Inaugration speeches, 2nd term")
+```
+
+What are these short sentences?
+```{r}
+Search_Words <- function(Word, Name, Terms)
+{
+  Str <- as.matrix(sentence.list%>%filter(File == Name, Term == Terms) 
+                   %>% select(sentences))
+  return(Str[grep(Word, Str)])
+}
+## Search "Word" From President's "Name"
+
+Search_Words("gay", "BarackObama", 2)
+
+Search_Words("tyranny", "GeorgeWBush", 2)
+
+Search_Words("war", "AbrahamLincoln", 2)
+
+Search_Words("peace", "FranklinDRoosevelt", 4)
+
+
+```

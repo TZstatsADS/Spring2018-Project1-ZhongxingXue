@@ -19,6 +19,24 @@ The inauguration speeches are always one of the most important events of the pre
 
 In this project, we will focus on the inauguration of the presidents who got re-elected. We apply statistic models, as well as text mining method to analyze those speeches: Is there any different between one's 2-terms speeches? Is there any tendency toward speeches from first term to second term? We will give answers in the doc folder.
 
+Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
+
+```
+proj/
+??? lib/
+??? data/
+??? doc/
+??? figs/
+??? output/
+```
+##  Main content of the project
+###  Overview of data & Basis Analysis
+
+###  Data processing -- Word frequency and Sentence length
+
+###  Data analysis -- Sentiment analysis
+
+###  Data analysis -- Topic modeling
 
 ### References 
 [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz)

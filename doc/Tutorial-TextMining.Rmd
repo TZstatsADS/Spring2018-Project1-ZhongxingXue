@@ -1,11 +1,23 @@
 ---
-title: "Tutorial (week 2) B: text mining"
+title: "Title"
 output: html_notebook
     toc: true
     toc_depth: 2
 ---
 
-# Step 0: check and install needed packages. Load the libraries and functions. 
+The inauguration speeches are always one of the most important events of the presidents, and they contain lots of messages and information. In this project, we will focus on the inauguration speeches of the US presidents ** who were re-elected (successfully)** by applying Natural Language Processing (NLP) methods.
+
+\textbf{I. Overview of the data}
+
+The President of the United States is the head of state and head of government of the United States of America and the term of office for the president is four years. Franklin D. Roosevelt, as we known, was elected to a 3rd and a 4th term, and died in his president office. In response to Roosevelt being elected to four terms, the Twenty-second Amendment was adopted in 1951. The amendment bars anyone from being elected president more than twice term, and since then, many presidents chose to re-elect in the 2nd term and quit before the 3rd term (if they get re-elected).
+
+In the project, We only choose all inauguration speeches of every president. 58 speeches are considered. We usually consider 16 getting re-elected presidents and thus 32 speeches (16 from their 1st term speech, and other 16 from 2nd's).
+
+
+
+Before we make a text analysis, we should do some preparation first.
+
+\textit{# Step 0: check and install needed packages. Load the libraries and functions.} 
 
 ```{r, message=FALSE, warning=FALSE, echo = FALSE}
 packages.used=c("rvest", "tibble", "qdap", 
@@ -53,15 +65,8 @@ library("topicmodels")
 source("../lib/plotstacked.R")
 source("../lib/speechFuncs.R")
 ```
-This notebook was prepared with the following environmental settings.
 
-```{r, echo = FALSE}
-print(R.version)
-```
-
-# Step 1: Data harvest: scrap speech URLs from <http://www.presidency.ucsb.edu/>.
-
-Following the example of [Jerid Francom](https://francojc.github.io/2015/03/01/web-scraping-with-rvest-in-r/), we used [Selectorgadget](http://selectorgadget.com/) to choose the links we would like to scrap. For this project, we selected all inaugural addresses of past presidents, nomination speeches of major party candidates and farewell addresses. We also included several public speeches from Donald Trump for our textual analysis of presidential speeches. 
+\textit{# Step 1: Data harvest: scrap speech URLs from <http://www.presidency.ucsb.edu/>.\\Following the example of [Jerid Francom](https://francojc.github.io/2015/03/01/web-scraping-with-rvest-in-r/), we used [Selectorgadget](http://selectorgadget.com/) to choose the links we would like to scrap. For this project, we selected all inaugural addresses of past presidents, nomination speeches of major party candidates and farewell addresses. We also included several public speeches from Donald Trump for our textual analysis of presidential speeches. }
 
 ```{r, message=FALSE, warning=FALSE, echo = FALSE}
 ### Inauguaral speeches
@@ -75,26 +80,26 @@ inaug=inaug[-nrow(inaug),] # remove the last line, irrelevant due to error.
 
 ```
 
-# Step 2: Using speech metadata posted on <http://www.presidency.ucsb.edu/>, we prepared CSV data sets for the speeches we will scrap. 
+\textit{# Step 2: Using speech metadata posted on <http://www.presidency.ucsb.edu/>, we prepared CSV data sets for the speeches we will scrap.}
 
-```{r}
+```{r, echo = FALSE}
 inaug.list=read.csv("../data/inauglist.csv", stringsAsFactors = FALSE)
 ```
 
-We assemble all scrapped speeches into one list. Note here that we don't have the full text yet, only the links to full text transcripts. 
+\textit{We assemble all scrapped speeches into one list. Note here that we don't have the full text yet, only the links to full text transcripts.}
 
-# Step 3: scrap the texts of speeches from the speech URLs.
+\textit{# Step 3: scrap the texts of speeches from the speech URLs.}
 
-```{r}
+```{r, echo = FALSE}
 speech.list=inaug.list
 speech.list$type=c(rep("inaug", nrow(inaug.list)))
 speech.url=inaug
 speech.list=cbind(speech.list, speech.url)
 ```
 
-Based on the list of speeches, we scrap the main text part of the transcript's html page. For simple html pages of this kind,  [Selectorgadget](http://selectorgadget.com/) is very convenient for identifying the html node that `rvest` can use to scrap its content. For reproducibility, we also save our scrapped speeches into our local folder as individual speech files. 
+\textit{Based on the list of speeches, we scrap the main text part of the transcript's html page. For simple html pages of this kind, [Selectorgadget](http://selectorgadget.com/) is very convenient for identifying the html node that `rvest` can use to scrap its content. For reproducibility, we also save our scrapped speeches into our local folder as individual speech files. }
 
-```{r}
+```{r, echo= FALSE}
 # Loop over each row in speech.list
 speech.list$fulltext=NA
 for(i in seq(nrow(speech.list))) {
@@ -113,13 +118,9 @@ for(i in seq(nrow(speech.list))) {
 }
 ```
 
-# Step 4: data Processing --- generate list of sentences
+\textit{# Step 4: data Processing --- generate list of sentences \\ We will use sentences as units of analysis for this project, as sentences are natural languge units for organizing thoughts and ideas. For each extracted sentence, we apply sentiment analysis using [NRC sentiment lexion](http://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm). "The NRC Emotion Lexicon is a list of English words and their associations with eight basic emotions (anger, fear, anticipation, trust, surprise, sadness, joy, and disgust) and two sentiments (negative and positive). The annotations were manually done by crowdsourcing."\\We assign an sequential id to each sentence in a speech (`sent.id`) and also calculated the number of words in each sentence as *sentence length* (`word.count`).}
 
-We will use sentences as units of analysis for this project, as sentences are natural languge units for organizing thoughts and ideas. For each extracted sentence, we apply sentiment analysis using [NRC sentiment lexion](http://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm). "The NRC Emotion Lexicon is a list of English words and their associations with eight basic emotions (anger, fear, anticipation, trust, surprise, sadness, joy, and disgust) and two sentiments (negative and positive). The annotations were manually done by crowdsourcing."
-
-We assign an sequential id to each sentence in a speech (`sent.id`) and also calculated the number of words in each sentence as *sentence length* (`word.count`).
-
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, echo = FALSE}
 sentence.list=NULL
 for(i in 1:nrow(speech.list)){
   sentences=sent_detect(speech.list$fulltext[i],
@@ -546,7 +547,7 @@ corpus.list.df=cbind(corpus.list, topicProbabilities)
 ```
 
 ## Clustering of topics
-```{r, fig.width=3, fig.height=5.5}
+```{r, fig.width=3.3, fig.height=5.2}
 par(mar=c(1,1,1,1))
 topic.summary=tbl_df(corpus.list.df)%>%
               filter(Term == 1, File%in%sentence.list.inaug$File)%>%
@@ -569,6 +570,8 @@ topic.summary <- rbind(topic.summary, topic.summary2)
 # [6] "Willing"    "Belief"     "Duty"       "Time"       "Freedom"   
 #[11] "Right"      "Patriotism" "Liberty"    "Public"     "Peace"      
  
+
+
 #topic.plot=c(1, 13, 9, 11, 8, 3, 7)
 topic.plot <- 1:15
 print(topics.hash[topic.plot])
@@ -627,14 +630,30 @@ presid.summary=tbl_df(corpus.list.df)%>%
   group_by(File)%>%
   summarise_each(funs(mean))
 
+presid.summary=tbl_df(corpus.list.df)%>%
+              filter(Term == 1, File%in%sentence.list.inaug$File)%>%
+              select(File, Election:Peace)%>%
+              group_by(File)%>%
+              summarise_each(funs(mean))
 presid.summary=as.data.frame(presid.summary)
-rownames(presid.summary)=as.character((presid.summary[,1]))
+rownames(presid.summary) <- paste(as.character((presid.summary[,1])),"1",sep="")
+
+presid.summary2=tbl_df(corpus.list.df)%>%
+              filter(Term == 2, File%in%sentence.list.inaug$File)%>%
+              select(File, Election:Peace)%>%
+              group_by(File)%>%
+              summarise_each(funs(mean))
+presid.summary2=as.data.frame(presid.summary2)
+rownames(presid.summary2) <- paste(as.character((presid.summary2[,1])),"2",sep="")
+
+presid.summary <- rbind(presid.summary, presid.summary2)
+
 km.res=kmeans(scale(presid.summary[,-1]), iter.max=200,
               2)
 fviz_cluster(km.res, 
-             stand=T, repel= TRUE,
+             stand=T, repel= TRUE,ellipse.type = "confidence",
              data = presid.summary[,-1],
-             show.clust.cent=FALSE)
+             show.clust.cent=FALSE, labelsize = 8, xlab="",ylab="",main="")
 ```
 
 # Readings for NLP with Python

@@ -1,12 +1,19 @@
 ---
 title: "Plot"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+we4343 **Sdsd** 8hd ** 3idih ** dwdw.
+
+sssd \textit{ 2ed2 ddwe \\ weww  \\ eWe,d }
+
+2e23
 
 ```{r}
 
@@ -42,7 +49,7 @@ Presidents2terms $ WordSum[Presidents2terms $ Term == 2] <- Presidents2terms $Wo
 Presidents2terms $ WordMean[Presidents2terms $ Term == 2] <- Presidents2terms $WordCountMean2nd[Presidents2terms $ Term == 2]
 
 
-ggplot(data = Presidents2terms, aes(as.character(StartYear), WordSum, group = Term, fill = Term, color = Term)) + geom_smooth(method = "loess") + geom_col(position = "dodge") + xlab("Started year of President") + ylab("Number of words") + ggtitle("number of words in Inauguration Speeches") + theme(plot.title = element_text(hjust = 0.5))
+ggplot(data = Presidents2terms, aes(as.character(StartYear), WordSum, group = Term, fill = Term, color = Term)) + geom_smooth(method = "loess") + geom_col(position = "dodge", alpha = 0.3) + xlab("Started year of President") + ylab("Number of words") + ggtitle("number of words in Inauguration Speeches") + theme(plot.title = element_text(hjust = 0.5))
 
 
 ggplot(data = Presidents2terms, aes(as.character(StartYear), WordMean, group = Term, fill = Term, color = Term)) + geom_smooth(method = "loess") + geom_col(position = "dodge", alpha = 0.3) + xlab("Started year of President") + ylab("Average words/setence") + ggtitle("average words per sentence in Inauguration Speeches") + theme(plot.title = element_text(hjust = 0.5))
