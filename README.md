@@ -38,9 +38,16 @@ proj/
 ![image](figs/funfactcluster1.png)
 ###  Data analysis -- Topic modeling
 ![image](figs/cluster_topic.png)
+
+If the above picture is too small or doesn't fit very well in .html files, use this one.
+
+The whole project is shown in the doc folder -> Hw1zx2221.html. Thanks for watching!
+
 ### References 
 [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz)
 
 https://en.wikipedia.org/wiki/President_of_the_United_States
 
 http://news.gallup.com/poll/116677/Presidential-Approval-Ratings-Gallup-Historical-Statistics-Trends.aspx , Gallup.com. Retrieved August 16, 2011.
+
+Sample program from instructor

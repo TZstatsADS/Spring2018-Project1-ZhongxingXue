@@ -292,7 +292,7 @@ length(Search_Words("freedom", "GeorgeWBush", 2))
 ```
 
 With WordCloud programme we can analyze which words did they speak with large frequency.
-```{r, fig.height=3, fig.width=6, warning= FALSE, echo=FALSE}
+```{r, warning= FALSE, echo=FALSE}
 par(mfrow=c(1,2))
 
 folder.path="../data/InauguralSpeeches1/"
@@ -318,7 +318,7 @@ Words <- sort(rowSums(as.matrix(tdm.all)),decreasing=TRUE)
 MostWord1 <- data.frame(word = names(Words), freq = Words)
 ```
 
-```{r, fig.height=3, fig.width=6, warning= FALSE, echo=FALSE}
+```{r, warning= FALSE, echo=FALSE}
 
 folder.path="../data/InauguralSpeeches2/"
 ff.all<-Corpus(DirSource(folder.path))
@@ -397,7 +397,7 @@ Which sentiment is the right sentiment that appeared in an inauguration speech? 
 
 We define 8 possible sentiment: anger, disgust, fear, sadness(negative, shown in dark colors), and anticipation, joy, surprise, trust(positive, show in light color). First we check that What sentiment should be appeared towards whole inauguration speeches.
 
-```{r, fig.width=4, fig.height=2, echo = FALSE}
+```{r, echo = FALSE}
 par(mar=c(4, 6, 2, 1), mfrow=c(1,2))
 
 emo.means=colMeans(select(sentence.list%>%filter(Term==1), anger:trust)>0.01)
@@ -486,7 +486,6 @@ By choosing the longest distance of presidents' two point, we could find the mos
 
 We try other cases (k=3, 4, 5), none of them has meaningful information.
 
-> FunFact
 
 
 # IV: Data mining -- Topic Modeling
@@ -590,7 +589,7 @@ colnames(topicProbabilities)=topics.hash
 corpus.list.df=cbind(corpus.list, topicProbabilities)
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 ## Clustering of topics
 par(mar=c(1,1,1,1))
 topic.summary=tbl_df(corpus.list.df)%>%
@@ -634,7 +633,10 @@ We recieve a cluster map and heat map of each speech toward each topic. Red squa
 3. The most "Reform" speech is from Richard Nixon, 2nd term. Coincidentally, Nixon is the first president to contact with China and visit China. He presented his speech with action.(Of course it could be just a coincidence)
 
 
-```{r, echo = FALSE}
+The upcoming test is the most accordant sentence in each topic.
+
+
+```{r, echo = FALSE, warning = FALSE}
 speech.df=tbl_df(corpus.list.df)%>%filter( word.count<20)%>%select(sentences, Election:Peace)
 
 as.character(speech.df$sentences[apply(as.data.frame(speech.df[,-1]), 2, which.max)])
