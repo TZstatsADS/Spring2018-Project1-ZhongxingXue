@@ -1,31 +1,26 @@
 # Spring 2018
 # Project 1: Fun facts of inauguration in the re-elected presidents
 
-![image](figs/title.jpg)
+~~Will Donald Trump be re-elected in 2020?~~
 
-<div align=center>
-<img src="figs/title.jpg" alt="Will Trump get re-elected in 2020?" align=center />
-</div>
+![image](figs/title.jpg)
 
 ### [Project Description](doc/)
 This is the first and only *individual* (as opposed to *team*) this semester. 
 
 Term: Spring 2018
 
-+ Projec title: Lorem ipsum dolor sit amet
-+ This project is conducted by [your name]
++ Projec Fun facts of inauguration in the re-elected presidents
++ This project is conducted by Zhongxing Xue(zx2221)
 
-+ Project summary: [a short summary] Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
++ Project summary: 
 
-Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
+The inauguration speeches are always one of the most important events of the presidents. Many experts try to analyze which kinds of person would they be through the inauguration speeches. In particular, those presidents who get re-elected would be the focus of analysis, because they had 8 years -- a very long time -- to administer the whole country.
 
-```
-proj/
-├── lib/
-├── data/
-├── doc/
-├── figs/
-└── output/
-```
+In this project, we will focus on the inauguration of the presidents who got re-elected. We apply statistic models, as well as text mining method to analyze those speeches: Is there any different between one's 2-terms speeches? Is there any tendency toward speeches from first term to second term? We will give answers in the doc folder.
 
-Please see each subfolder for a README file.
+
+### References 
+[RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz)
+http://www.sthda.com/english/wiki/text-mining-and-word-cloud-fundamentals-in-r-5-simple-steps-you-should-know
+http://anythingbutrbitrary.blogspot.com/2014/01/statistics-meets-rhetoric-text-analysis.html
